@@ -2,7 +2,7 @@ import numpy as np
 import scipy as sp
 import sympy as sym
 
-a, b, x, y = sym.symbols('a b x y')
+a, b, x, y, u, v = sym.symbols('a b x y u v')
 
 class loss:
     def __init__(self, E, data=[x,y]):
@@ -15,8 +15,16 @@ class loss:
     def value(self, params):
         return self.formula.subs([(a, params[0]),(b, params[1])])
     
-    def plot(self, range_a, range_b):
-        sym.plotting.plot3d(self.formula, (a, range_a[0],range_a[1]), (b, range_b[0], range_b[1]))
+    def plot(self, range_a, range_b, include_minima=False):
+        p_1 = sym.plotting.plot3d(self.formula, (a, range_a[0],range_a[1]), (b, range_b[0], range_b[1]), show =False)
+        if include_minima == True:
+            p_2 = sym.plotting.plot3d_parametric_line((u,self.global_minima.subs(a,u), 0.0000001*u, (u, 0.2, 5)), (v,self.global_minima.subs(a,v), 0.0000001*v, (v, -5, -0.2)), show =False)  
+            p_2[0].line_color='r'   
+            p_2[1].line_color='r' 
+            p_1.extend(p_2)
+
+        p_1.show()
+
 
 
 def loss_modifier(og_loss, h):
